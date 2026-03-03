@@ -406,62 +406,61 @@
         }
 
         /* ========== POPUP VIDEO MODAL ========== */
-        .video-popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(15px);
-        }
+       /* ========== CINEMATIC FULLSCREEN POPUP ========== */
 
-        .video-popup.active {
-            display: flex;
-            animation: popupFade 0.5s ease;
-        }
+.video-popup {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
 
-        @keyframes popupFade {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
+.video-popup.active {
+    opacity: 1;
+    visibility: visible;
+}
 
-        .popup-content {
-            position: relative;
-            width: 90%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 70px 20px 70px 20px;
-            padding: 30px;
-            border: 5px solid #ffb3c6;
-            box-shadow: 0 0 100px #ff4d6d, 0 0 200px #ffb3c6;
-            text-align: center;
-        }
+.popup-content {
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    padding: 30px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 80px rgba(255, 77, 109, 0.6);
+    text-align: center;
+    transform: scale(0.7);
+    transition: transform 0.5s ease;
+}
 
-        .popup-content h2 {
-            color: white;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 0 0 30px #ff4d6d;
-        }
+.video-popup.active .popup-content {
+    transform: scale(1);
+}
 
-        .popup-video-container {
-            width: 100%;
-            border-radius: 50px 15px 50px 15px;
-            overflow: hidden;
-            border: 5px solid white;
-            box-shadow: 0 0 50px #ffb3c6;
-        }
+.popup-video-container {
+    width: 100%;
+    max-height: 60vh;
+    overflow: hidden;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
 
-        .popup-video-container video {
-            width: 100%;
-            display: block;
-        }
-
+.popup-video-container video {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+    border-radius: 20px;
+}
         .close-popup {
             position: absolute;
             top: 20px;
@@ -506,7 +505,25 @@
             filter: blur(2px);
             animation: sparkleTwinkle 1.5s infinite;
         }
+		.cinematic-text {
+    font-size: 2rem;
+    color: white;
+    text-shadow: 0 0 20px #ff4d6d;
+    margin-top: 15px;
+    animation: fadeInUp 1.2s ease forwards;
+    opacity: 0;
+}
 
+@keyframes fadeInUp {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
         @keyframes sparkleTwinkle {
             0%, 100% { opacity: 0; transform: scale(0); }
             50% { opacity: 1; transform: scale(2); }
@@ -522,6 +539,17 @@
             font-size: 1.5rem;
             text-shadow: 0 0 20px #ffdb8a;
         }
+		@media (max-width: 600px) {
+    .popup-content {
+        width: 95%;
+        padding: 15px;
+        border-radius: 25px;
+    }
+
+    .popup-content h2 {
+        font-size: 1.5rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -552,11 +580,9 @@
             <div class="close-popup" onclick="closePopup()">×</div>
             <h2>💖 My Special Message For You 💖</h2>
             <div class="popup-video-container">
-                <video controls autoplay loop id="popupVideo">
-                    <source src="video1.mp4" type="video/mp4">
-                    <source src="video1.mp4" type="video/mp4">
-                    <source src="video1.mp4" type="video/mp4">
-                </video>
+<video id="popupVideo" controls playsinline preload="metadata">
+    <source src="video.mp4" type="video/mp4">
+</video>
             </div>
             <p style="color: white; font-size: 1.8rem; margin-top: 20px;">✨ You're the most beautiful color of my life! ✨</p>
         </div>
@@ -580,7 +606,7 @@
                     
                     <div class="image-gallery">
                         <img class="holi-img" src="pic1.jpeg" alt="holi colors">
-                        <img class="holi-img" src="pic2.jpeg" alt="holi love">
+                        <img class="holi-img" src="pic4.jpg" alt="holi love">
                         <img class="holi-img" src="pic3.jpeg" alt="holi fun">
                     </div>
 
@@ -611,7 +637,7 @@
                     </div>
 
                     <div class="image-gallery">
-                        <img class="holi-img" src="pic3.jpeg" alt="holi romance">
+                        <img class="holi-img" src="pic2nd.jpeg" alt="holi romance">
                     </div>
 
                     <button class="see-more-btn" id="finalPopupBtn">
@@ -734,59 +760,37 @@
         }
 
         // ========== POPUP FUNCTIONS ==========
-        function openPopup() {
-            const popup = document.getElementById('videoPopup');
-            const reply = document.getElementById('finalReply');
-            const video = document.getElementById('popupVideo');
-            
-            // Show popup
-            popup.classList.add('active');
-            
-            // Play video
-            video.play().catch(e => console.log('video play failed', e));
-            
-            // Show love reply
-            reply.classList.remove('hidden');
-            
-            // Change button text
-            document.getElementById('finalPopupBtn').innerHTML = ' 💖 She said YES! 💖 ';
-            
-            // Create confetti explosion
-            for (let i = 0; i < 70; i++) {
-                setTimeout(() => {
-                    let conf = document.createElement('div');
-                    conf.style.position = 'fixed';
-                    conf.style.zIndex = '10002';
-                    conf.style.width = '20px';
-                    conf.style.height = '20px';
-                    conf.style.background = `hsl(${Math.random() * 360}, 90%, 70%)`;
-                    conf.style.borderRadius = '50%';
-                    conf.style.left = '50%';
-                    conf.style.top = '50%';
-                    conf.style.pointerEvents = 'none';
-                    conf.style.boxShadow = '0 0 30px currentColor';
-                    document.body.appendChild(conf);
-                    
-                    let angle = Math.random() * Math.PI * 2;
-                    let distance = Math.random() * 300 + 100;
-                    let dx = Math.cos(angle) * distance;
-                    let dy = Math.sin(angle) * distance - 100;
-                    
-                    conf.animate([
-                        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-                        { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.2)`, opacity: 0 }
-                    ], { duration: 1500, fill: 'forwards' });
-                    setTimeout(() => conf.remove(), 1600);
-                }, i * 20);
-            }
-        }
+       function openPopup() {
+    const popup = document.getElementById('videoPopup');
+    const video = document.getElementById('popupVideo');
+    const reply = document.getElementById('finalReply');
 
+    popup.classList.add('active');
+
+    // Pause background animations
+    document.querySelectorAll('.balloon, .color-drop').forEach(el => {
+        el.style.animationPlayState = 'paused';
+    });
+
+    video.currentTime = 0;
+    video.play().catch(()=>{});
+
+    reply.classList.remove('hidden');
+
+    document.getElementById('finalPopupBtn').innerHTML = ' 💖 She Said YES 💖 ';
+}
         function closePopup() {
-            const popup = document.getElementById('videoPopup');
-            const video = document.getElementById('popupVideo');
-            popup.classList.remove('active');
-            video.pause();
-        }
+    const popup = document.getElementById('videoPopup');
+    const video = document.getElementById('popupVideo');
+
+    popup.classList.remove('active');
+    video.pause();
+
+    // 🔥 Resume animations
+    document.querySelectorAll('.balloon, .color-drop').forEach(el => {
+        el.style.animationPlayState = 'running';
+    });
+}
 
         // current page index (1-4)
 let currentPage = 1;
